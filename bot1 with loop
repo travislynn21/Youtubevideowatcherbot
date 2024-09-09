@@ -54,3 +54,4 @@ def restart_browser(url):
 if __name__ == "__main__":
     url = input("Enter the URL of the webpage with the video: ")
     restart_browser(url)
+
