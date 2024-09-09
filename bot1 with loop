@@ -1,0 +1,56 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import time
+
+def check_video_playing(driver):
+    try:
+        # Locate the video element
+        video = driver.find_element(By.TAG_NAME, 'video')
+
+        # Check if the video is playing
+        is_playing = driver.execute_script("return arguments[0].paused === false;", video)
+        return is_playing
+    except Exception as e:
+        print(f"An error occurred while checking video status: {e}")
+        return False
+
+def restart_browser(url):
+    iteration = 0
+    while True:
+        iteration += 1
+        print(f"Iteration: {iteration}")
+
+        # Initialize the WebDriver (e.g., Chrome)
+        driver = webdriver.Chrome()
+
+        try:
+            # Open the webpage with the video
+            driver.get(url)
+
+            if iteration == 1:
+                # Wait for 1 minute and 20 seconds on the first iteration
+                time.sleep(80)
+            elif iteration == 2:
+                # Wait for 2 minutes on the second iteration if the video is playing
+                if check_video_playing(driver):
+                    print("The video is playing.")
+                    time.sleep(120)
+                else:
+                    print("The video is not playing.")
+            else:
+                # Wait for 45 seconds on subsequent iterations
+                time.sleep(45)
+                if check_video_playing(driver):
+                    print("The video is playing.")
+                    time.sleep(45)
+
+        finally:
+            # Close the browser
+            driver.quit()
+
+        # Wait for 5 seconds before restarting the browser
+        time.sleep(5)
+
+if __name__ == "__main__":
+    url = input("Enter the URL of the webpage with the video: ")
+    restart_browser(url)
